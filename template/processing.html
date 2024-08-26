@@ -1,0 +1,37 @@
+<!doctype html>
+<title>Web app : compressing PDF file</title>
+<h2>Select file(s) to compress</h2>
+<p>
+	{% with messages = get_flashed_messages() %}
+	  {% if messages %}
+		<ul class=flashes>
+		{% for message in messages %}
+		  <li>{{ message }}</li>
+		{% endfor %}
+		</ul>
+	  {% endif %}
+	{% endwith %}
+</p>
+<form method="post" action="/" enctype="multipart/form-data">
+    <dl>
+		<p>
+			<input type="file" name="files[]" multiple="true" autocomplete="off" required>
+		</p>
+    </dl>
+    <p>
+		<input type="submit" value="Submit">
+	</p>
+</form>
+<form method="POST" action="/downloads">
+
+	<input name="Download" type="submit" value="Download">
+
+</form>
+<p></p>
+<form method="POST" action="/delete">
+
+	<input name="Delete" type="submit" value="Clear all data">
+
+</form>
+
+
