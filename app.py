@@ -167,8 +167,8 @@ def upload_file():
         flash('File(s) successfully uploaded and under processing ')
         print(' Compressing file ')
         compress_filename=compress_file(filename)
-        print(' Compressing image on file ')
-        compress_image_filename=compress_image_on_file(filename)
+        # print(' Compressing image on file ')
+        # compress_image_filename=compress_image_on_file(filename)
         ##
         # compress_ghostedscript_w_option_file(filename, '/default')
         ##      
