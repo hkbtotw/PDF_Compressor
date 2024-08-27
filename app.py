@@ -5,6 +5,7 @@ from werkzeug.utils import secure_filename
 ##
 from pypdf import PdfReader, PdfWriter
 import subprocess
+import pymupdf
 ##
 
 ##
@@ -43,6 +44,13 @@ def downloadFile ():
     print(filepath,' === ',compress_filename) 
     #For windows you need to use drive name [ex: F:/Example.pdf]    
     path = os.path.join(filepath,compress_filename)
+    return send_file(path, as_attachment=True)
+
+@app.route('/downloads_image', methods=['GET','POST'])
+def downloadFile_2 ():
+    filepath=os.path.join(app.config['UPLOAD_FOLDER'])
+    print(filepath,' === ',compress_image_filename)
+    path = os.path.join(filepath,compress_image_filename)
     return send_file(path, as_attachment=True)
 
 @app.route('/delete', methods=['GET','POST'])
@@ -140,6 +148,17 @@ def compress_ghostedscript_w_option_file(input_file: str, arg1: str):
 
     return None
 
+
+def compress_pymupdf(input_file):
+    output_file=input_file.split('/')[len(input_file.split('/'))-1]
+    output_file=output_file+'_image_compressed.pdf'
+    input_path=os.path.join(app.config['UPLOAD_FOLDER'],input_file)
+    doc = pymupdf.open(input_path)
+
+    doc.ez_save(os.path.join(app.config['UPLOAD_FOLDER'],output_file), deflate=True , deflate_images=True, deflate_fonts=True,  garbage=3, compression_effort=100,clean=True)
+    doc.close()
+    return output_file
+
 ###
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -164,11 +183,13 @@ def upload_file():
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-        flash('File(s) successfully uploaded and under processing ')
+        flash('File(s) successfully uploaded and pressed => Go ahead download them all. ')
         print(' Compressing file ')
         compress_filename=compress_file(filename)
-        # print(' Compressing image on file ')
+        print(' Compressing image on file ')
         # compress_image_filename=compress_image_on_file(filename)
+        compress_image_filename=compress_pymupdf(filename)
+        # print(' ===> ',compress_image_filename)
         ##
         # compress_ghostedscript_w_option_file(filename, '/default')
         ##      
